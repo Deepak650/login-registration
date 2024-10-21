@@ -11,4 +11,4 @@ spec:
   ports:
     - protocol: TCP
       port: 80       # The port exposed by the service
-      targetPort: 8000  # The port where the Django app is running inside the container
+      targetPort: 8080  # The port where the Django app is running inside the container
