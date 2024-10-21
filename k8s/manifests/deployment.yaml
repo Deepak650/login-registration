@@ -5,7 +5,7 @@ metadata:
   labels:
     app: django-app
 spec:
-  replicas: 3  # Number of pod replicas
+  replicas: 1  # Number of pod replicas
   selector:
     matchLabels:
       app: django-app
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: django-container
-        image: appcontain.azurecr.io/loginregistration:latest  # Replace with your Docker images
+        image: appcontain.azurecr.io/loginregistration:107  # Replace with your Docker images
         ports:
         - containerPort: 8080
         
