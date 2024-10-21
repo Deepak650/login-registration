@@ -31,7 +31,10 @@ steps:
     azureResourceGroup: 'Login'
     kubernetesCluster: 'mycluster'
     namespace: 'default'
+    strategy: 'canary'
+    percentage: '0'
     manifests: 'k8s/manifests/*.yaml'
     containers: 'appcontain.azurecr.io/loginregistration:107'
+    rolloutStatusTimeout: 
 
 
