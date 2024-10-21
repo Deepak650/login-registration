@@ -1,0 +1,46 @@
+trigger:
+- master  # Replace with your default branch
+
+pool:
+ name: 'azureagent'
+
+variables:
+  # Define variables
+  azureSubscription: 'Azure Resource Manager service connection'  # Azure service connection name
+  acrName: 'appcontain'  # ACR name
+  imageName: 'loginregistration'  # Name of your image
+  imageTag: '$(Build.BuildId)'  # Use build ID as image tag
+  aksResourceGroup: 'Login'  # Resource group containing AKS
+  aksClusterName: 'mycluster'  # Name of your AKS cluster
+  namespace: 'default'  # Kubernetes namespace
+
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: '$(azureSubscription)'
+        repository: '$(acrName)/$(imageName)'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: '$(imageTag)'
+
+- stage: Deploy
+  jobs:
+  - job: Deploy
+    dependsOn: Build
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: '$(azureSubscription)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          # Set the Kubernetes context to the AKS cluster
+          az aks get-credentials --resource-group $Login --name $mycluster
+          
+          # Deploy to AKS using kubectl
+          kubectl apply -f deployment.yaml  # Your deployment YAML file path
+
