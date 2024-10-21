@@ -39,7 +39,7 @@ stages:
         inlineScript: |
         
           # Set the Kubernetes context to the AKS cluster
-          az aks get-credentials --resource-group $Login --name $mycluster
+          az aks get-credentials --resource-group $Login --name $mycluster --overwrite-existing
           
           # Deploy to AKS using kubectl
           kubectl apply -f deployment.yaml  # Your deployment YAML file path
