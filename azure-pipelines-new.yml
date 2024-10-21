@@ -21,20 +21,19 @@ stages:
     steps:
     - task: Docker@2
       inputs:
-        containerRegistry: '$(azureSubscription)'
+        containerRegistry: 'appcontain'
         repository: '$(acrName)/$(imageName)'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
-        tags: '$(imageTag)'
+        tags: '$(imageTag),latest'
 
 - stage: Deploy
   jobs:
   - job: Deploy
-    dependsOn: Build
     steps:
     - task: AzureCLI@2
       inputs:
-        azureSubscription: '$(azureSubscription)'
+        azureSubscription: 'Azure Resource Manager service connection'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
