@@ -37,6 +37,7 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          az aks install-cli
           # Set the Kubernetes context to the AKS cluster
           az aks get-credentials --resource-group $Login --name $mycluster
           
