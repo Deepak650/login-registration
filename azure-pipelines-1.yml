@@ -1,0 +1,37 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+ name: 'azureagent'
+
+variables:
+  tag: '$(Build.BuildId)'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Azure Resource Manager service connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      docker build -t appcontain.azurecr.io/appcontain:latest:$(tag).az acr login --name appcontain
+      docker push appcontain.azurecr.io/appcontain:latest:$(tag)
+  
+- task: KubernetesManifest@1
+  inputs:
+    action: 'deploy'
+    connectionType: 'azureResourceManager'
+    azureSubscriptionConnection: 'Azure Resource Manager service connection'
+    azureResourceGroup: 'Login'
+    kubernetesCluster: 'mycluster'
+    namespace: 'default'
+    manifests: 'k8s/manifests/*.yaml'
+    containers: 'appcontain.azurecr.io/appcontain:latest:$(tag)'
+    rolloutStatusTimeout: 
+
+
