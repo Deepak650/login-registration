@@ -19,9 +19,9 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      docker build -t appcontain.azurecr.io/loginregistration:latest
+      docker build -t appcontain.azurecr.io/loginregistration:107
       az acr login --name appcontain
-      docker push appcontain.azurecr.io/loginregistration:latest
+      docker push appcontain.azurecr.io/loginregistration:107
   
 - task: KubernetesManifest@1
   inputs:
@@ -32,7 +32,6 @@ steps:
     kubernetesCluster: 'mycluster'
     namespace: 'default'
     manifests: 'k8s/manifests/*.yaml'
-    containers: 'appcontain.azurecr.io/appcontain:latest:$(tag)'
-    rolloutStatusTimeout: 
+    containers: 'appcontain.azurecr.io/loginregistration:107'
 
 
