@@ -19,9 +19,9 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      docker build -t appcontain.azurecr.io/appcontain:latest:$(tag)
+      docker build -t appcontain.azurecr.io/appcontain:latest
       az acr login --name appcontain
-      docker push appcontain.azurecr.io/appcontain:latest:$(tag)
+      docker push appcontain.azurecr.io/appcontain:latest
   
 - task: KubernetesManifest@1
   inputs:
