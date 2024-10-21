@@ -32,12 +32,6 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: 'Azure Resource Manager service connection'
-        scriptType: 'batch'
-        scriptLocation: 'inlineScript'
-        inlineScript: 'az acr login --name $appcontain'
     - task: CopyFiles@2
       displayName: 'Copy Files to Artifact Staging Directory'
       inputs:
