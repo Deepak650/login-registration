@@ -1,0 +1,55 @@
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '73765473-767f-41f7-9c3f-d2d74d37e7a2'
+  imageRepository: 'loginregistration'
+  containerRegistry: 'appcontain.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: '$(Build.BuildId)'
+
+pool:
+  name: 'azureagent'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Azure Resource Manager service connection'
+        scriptType: 'batch'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az acr login --name $appcontain'
+    - task: CopyFiles@2
+      displayName: 'Copy Files to Artifact Staging Directory'
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/k8s/manifests'
+        Contents: '**/*'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/$(ARTIFACT_NAME)'
+        CleanTargetFolder: true
+        OverWrite: true
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
