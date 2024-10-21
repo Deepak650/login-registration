@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: django-container
-        image: appcontain.azurecr.io/appcontain/loginregistration:latest  # Replace with your Docker images
+        image: appcontain.azurecr.io/loginregistration:latest  # Replace with your Docker images
         ports:
         - containerPort: 8080
         
